@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8888
+    vault:
+      scheme: http
+      kv:
+        enabled: true
+      uri: http://localhost:8200
+      token: s.QQmyvRZlEpoExghtd3cjCkDM
+  application:
+    name: Healthcare-User-API
+logging:  file: 
+    path: C:\Users\gokul\Documents\ELK\log\Healthcare.log
+
