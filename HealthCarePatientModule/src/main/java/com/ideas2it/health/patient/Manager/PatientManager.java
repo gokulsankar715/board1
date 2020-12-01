@@ -1,7 +1,5 @@
 package com.ideas2it.health.patient.Manager;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -22,37 +20,51 @@ public class PatientManager {
 
 	private final PatientRepositary patientRepositary;
 
-	public Patient addPatient(PatientDto patientDto) {
-		Patient patient = new Patient();
-		patient.setAddress1(patientDto.getAddress1());
-		patient.setAddress2(patientDto.getAddress2());
-		patient.setAge(patientDto.getAge());
-		patient.setCity(patientDto.getCity());
-		patient.setCountry(patientDto.getCountry());
-		patient.setDob(patientDto.getDob());
-		patient.setEmail(patientDto.getEmail());
-		patient.setGender(patientDto.getGender());
-		patient.setInitialregdate(patientDto.getInitialregdate());
-		patient.setLastregdate(patientDto.getLastregdate());
-		patient.setMaritalstatus(patientDto.getMaritalstatus());
-		patient.setMobilenumber(patientDto.getMobilenumber());
-		patient.setOccupation(patientDto.getOccupation());
-		patient.setPatientfirstname(patientDto.getPatientfirstname());
-		patient.setPatientid(patientDto.getPatientid());
-		patient.setPatientlastname(patientDto.getPatientlastname());
-		patient.setPatientusername(patientDto.getPatientusername());
-		patient.setPostalcode(patientDto.getPostalcode());
-		patient.setCreatedBy(patientDto.getCreatedBy());
-		patient.setUpdatedBy(patientDto.getUpdatedBy());
-		return patientRepositary.save(patient);
+	public PatientDto addPatient(PatientDto patientDto) {
+		return patientDto.ConvertPatientDto(patientRepositary.save(patientDto.ConvertPatientDomain(patientDto)));
 	}
 
-	public List<Patient> getAllPatient() {
-		return patientRepositary.findAll();
+	public String getAllPatient() {
+		if (patientRepositary.findAll() != null) {
+			return patientRepositary.findAll().toString();
+		} else {
+			return "Patients Info Not Available in DataBase";
+		}
+//		PatientDto patientDto = new PatientDto();
+//		return patientRepositary.findAll().stream().map(a -> patientDto.ConvertPatientDto(a))
+//				.collect(Collectors.toList());
 	}
 
-	public Patient getPatient(long patient_id) {
-		return patientRepositary.findByPatientid(patient_id);
+	public String getPatient(long patient_id) {
+		if (patientRepositary.findByPatientid(patient_id) != null) {
+			return patientRepositary.findByPatientid(patient_id).toString();
+		} else {
+			return String.format("Patient-Id : %1$s Not Available in Database", patient_id);
+		}
+		// return
+		// patientDto.ConvertPatientDto(patientRepositary.findByPatientid(patient_id));
+	}
+
+	public String updatePatient(long patient_id, PatientDto patientDto) {
+		if (patientRepositary.findByPatientid(patient_id) != null) {
+			PatientDto patients = patientDto.ConvertPatientDto(patientRepositary.findByPatientid(patient_id));
+			patients.setLastregdate(patientDto.getLastregdate());
+			Patient patient = patientDto.ConvertPatientDomain(patients);
+			return patientRepositary.save(patient).toString();
+		} else {
+			return String.format("patient-Id : %1$s Not Available in Database", patient_id);
+		}
+
+	}
+
+	public String deletePatient(long patient_id) {
+		if (patientRepositary.findByPatientid(patient_id) != null) {
+			patientRepositary.delete(patientRepositary.findByPatientid(patient_id));
+			return String.format("Patient-Id : %1$s Deleted Succesfully", patient_id);
+		} else {
+			return String.format("Patient-Id : %1$s Not Available in Database", patient_id);
+		}
+
 	}
 
 }

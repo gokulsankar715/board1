@@ -15,7 +15,7 @@ public class SwaggerConfig {
 
 	@Bean
 	public Docket postsApi() {
-		return new Docket(DocumentationType.SWAGGER_2).groupName("HealthCare").select().paths(regex("/patient.*"))
+		return new Docket(DocumentationType.SWAGGER_2).groupName("HealthCare").select().paths(regex("/patients.*"))
 				.build();
 	}
 }

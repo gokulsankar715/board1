@@ -1,5 +1,6 @@
 package com.ideas2it.health.patient.Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
@@ -28,7 +29,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Patient {
+public class Patient implements Serializable {
+
+	private static final long serialVersionUID = -5639259703688445624L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pat_gen")
