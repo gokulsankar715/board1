@@ -3,6 +3,7 @@ package com.ideas2it.health.user.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,21 +16,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ideas2it.health.user.Filter.JwtFilter;
-import com.ideas2it.health.user.Service.UserService;
+import com.ideas2it.health.user.Service.Impl.UserServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	@Lazy
 	@Autowired
-	private UserService userService;
+	public SecurityConfig(UserServiceImpl userServiceImpl, JwtFilter jwtFilter) {
+		super();
+		this.userServiceImpl = userServiceImpl;
+		this.jwtFilter = jwtFilter;
+	}
 
-	@Autowired
-	private JwtFilter jwtFilter;
+	private final UserServiceImpl userServiceImpl;
+
+	private final JwtFilter jwtFilter;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService);
+		auth.userDetailsService(userServiceImpl);
 	}
 
 	@Bean

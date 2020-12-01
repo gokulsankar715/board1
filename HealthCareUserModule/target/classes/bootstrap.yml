@@ -7,9 +7,10 @@ spring:
       kv:
         enabled: true
       uri: http://localhost:8200
-      token: s.QQmyvRZlEpoExghtd3cjCkDM
+      token: 00000000-0000-0000-0000-000000000000
   application:
     name: Healthcare-User-API
-logging:  file: 
-    path: C:\Users\gokul\Documents\ELK\log\Healthcare.log
-
+  kafka:
+    consumer:
+      properties:
+        spring.json.trusted.packages: '*'    

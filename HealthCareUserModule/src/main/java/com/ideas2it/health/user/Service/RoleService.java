@@ -1,28 +1,14 @@
 package com.ideas2it.health.user.Service;
 
-import java.util.List;
+import com.ideas2it.health.user.Dto.RoleDto;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
+public interface RoleService {
 
-import com.ideas2it.health.user.Dto.UserRoleDto;
-import com.ideas2it.health.user.Repositary.RoleRepositary;
+	public RoleDto addRole(RoleDto roleDto);
 
-@Service
-public class RoleService {
+	public RoleDto updateRole(String rolename, RoleDto roleDto);
 
-	@Lazy
-	@Autowired
-	public RoleService(RoleRepositary roleRepositary) {
-		super();
-		this.roleRepositary = roleRepositary;
-	}
+	public String deleteRole(String rolename);
 
-	private final RoleRepositary roleRepositary;
-
-	public List<UserRoleDto> getRoleNames(String rolename) {
-		return roleRepositary.getRoleNames(rolename);
-	}
-
+	public RoleDto getRoleDetails(String rolename);
 }

@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  config-server:
+    image: config-server-docker.jar
+    environment:
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/gokulsankar715/HealthCareUserModule
+    ports:
+      - 8888:8888
+  vault:
+    image: vault
+    ports:
+      - '8200:8200'
+    restart: always
+    environment:
+      - 'VAULT_ADDR=http://localhost:8200'
+      - 'VAULT_DEV_ROOT_TOKEN_ID=00000000-0000-0000-0000-000000000000'
+      - 'dev'
+    cap_add:
+      - IPC_LOCK
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql123
+      MYSQL_DATABASE: world
+      MYSQL_PASSWORD: mysql123
+      MYSQL_ROOT_HOST: '%'
+  healthcareuser:
+    image: healthcare-user-docker.jar
+    ports:
+      - '9000:9091'
+    environment:
+      SPRING_APPLICATION_JSON: '{"spring": {"cloud": {"config": {"uri": "http://config-server:8888"}}}}'
+      DB_HOST: db
+      DB_DATABASE: world
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: mysql123
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/world
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - config-server
+      - vault
+      - db

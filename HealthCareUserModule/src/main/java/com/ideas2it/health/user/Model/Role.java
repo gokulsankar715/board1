@@ -31,6 +31,8 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class)
 public class Role implements Serializable {
 
+	private static final long serialVersionUID = -6582837801106434716L;
+
 	@Id
 	@Column(name = "role_id")
 	private int role_id;
@@ -57,4 +59,5 @@ public class Role implements Serializable {
 	@LastModifiedDate
 	@Column(name = "updated_at")
 	private LocalDateTime updateAt;
+
 }

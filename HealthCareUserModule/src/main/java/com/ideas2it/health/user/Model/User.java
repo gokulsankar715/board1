@@ -28,6 +28,8 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class)
 public class User implements Serializable {
 
+	private static final long serialVersionUID = -172247086527812482L;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "user_id")
