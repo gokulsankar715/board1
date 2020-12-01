@@ -11,6 +11,6 @@ public interface VitalSignsRepositary extends JpaRepository<VitalSign, Long> {
 
 	List<VitalSign> findByPatientid(long patient_id);
 
-	List<VitalSign> findByPatientidAndCheckupdate(long patient_id, Date patient_checkup_date);
+	VitalSign findByPatientidAndCheckupdate(long patient_id, Date patient_checkup_date);
 
 }

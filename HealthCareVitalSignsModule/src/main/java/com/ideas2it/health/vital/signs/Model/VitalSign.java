@@ -1,5 +1,6 @@
 package com.ideas2it.health.vital.signs.Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
@@ -28,7 +29,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class VitalSign {
+public class VitalSign implements Serializable {
+
+	private static final long serialVersionUID = 6313577177732488030L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")

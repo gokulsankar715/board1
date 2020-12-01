@@ -1,12 +1,13 @@
 package com.ideas2it.health.vital.signs.Manager;
 
 import java.sql.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import com.ideas2it.health.vital.signs.Client.PatientClient;
+import com.ideas2it.health.vital.signs.Dto.PatientDto;
 import com.ideas2it.health.vital.signs.Dto.VitalSignDto;
 import com.ideas2it.health.vital.signs.Model.VitalSign;
 import com.ideas2it.health.vital.signs.Repositary.VitalSignsRepositary;
@@ -16,36 +17,69 @@ public class VitalSignManager {
 
 	@Lazy
 	@Autowired
-	public VitalSignManager(VitalSignsRepositary vitalSignsRepositary) {
+	public VitalSignManager(VitalSignsRepositary vitalSignsRepositary, PatientClient patientClient) {
 		super();
 		this.vitalSignsRepositary = vitalSignsRepositary;
+		this.patientClient = patientClient;
 	}
 
 	private final VitalSignsRepositary vitalSignsRepositary;
+	private final PatientClient patientClient;
 
-	public List<VitalSign> PatientInfo(long patient_id, Date patient_checkup_date) {
-		return vitalSignsRepositary.findByPatientidAndCheckupdate(patient_id, patient_checkup_date);
+	public String getCheckupDetails(long patient_id, Date patient_checkup_date) throws NullPointerException {
+		// VitalSignDto vitalSignDto = new VitalSignDto();
+		if (vitalSignsRepositary.findByPatientidAndCheckupdate(patient_id, patient_checkup_date) != null) {
+			return vitalSignsRepositary.findByPatientidAndCheckupdate(patient_id, patient_checkup_date).toString();
+		} else {
+			return String.format("Checkup-Info Not Available in the patient-Id : %1$s & checkup-date : %2$s",
+					patient_id, patient_checkup_date);
+		}
+
 	}
 
-	public List<VitalSign> PatientDetails(long patient_id) {
-		return vitalSignsRepositary.findByPatientid(patient_id);
+	public String getPatientDetails(long patient_id) {
+		if (vitalSignsRepositary.findByPatientid(patient_id) != null) {
+			return vitalSignsRepositary.findByPatientid(patient_id).toString();
+		} else {
+			return String.format("Checkup-Info Not Available in the patient-Id : %1$s", patient_id);
+		}
 	}
 
-	public VitalSign AddCheckUpInfo(VitalSignDto vitalSignDto) {
-		VitalSign vitalSign = new VitalSign();
-		vitalSign.setBloodpressure(vitalSignDto.getBloodpressure());
-		vitalSign.setBodytemperature(vitalSignDto.getBodytemperature());
-		vitalSign.setCheckupdate(vitalSignDto.getCheckupdate());
-		vitalSign.setCheckupid(vitalSignDto.getCheckupid());
-		vitalSign.setPatientid(vitalSignDto.getPatientid());
-		vitalSign.setPulserate(vitalSignDto.getPulserate());
-		vitalSign.setRespirationrate(vitalSignDto.getRespirationrate());
-		return vitalSignsRepositary.save(vitalSign);
+	public VitalSignDto addCheckup(VitalSignDto vitalSignDto) {
+		PatientDto patientDto = patientClient.getPatient(vitalSignDto.getPatientid());
+		patientDto.setLastregdate(vitalSignDto.getCheckupdate());
+		patientClient.updatePatient(vitalSignDto.getPatientid(), patientDto);
+		return vitalSignDto
+				.convertVitalSignDto(vitalSignsRepositary.save(vitalSignDto.convertVitalSignDomain(vitalSignDto)));
 	}
 
-	public VitalSign UpdatePatient(VitalSign vitalSign) {
+	public String updatePatient(long patient_id, Date patient_checkup_date, VitalSignDto vitalSignDto) {
+		if (vitalSignsRepositary.findByPatientidAndCheckupdate(patient_id, patient_checkup_date) != null) {
+			VitalSignDto vitals = vitalSignDto.convertVitalSignDto(
+					vitalSignsRepositary.findByPatientidAndCheckupdate(patient_id, patient_checkup_date));
+			vitals.setBloodpressure(vitalSignDto.getBloodpressure());
+			vitals.setBodytemperature(vitalSignDto.getBodytemperature());
+			vitals.setPulserate(vitalSignDto.getPulserate());
+			vitals.setRespirationrate(vitalSignDto.getRespirationrate());
+			VitalSign vitalSign = vitalSignDto.convertVitalSignDomain(vitals);
+			return vitalSignsRepositary.save(vitalSign).toString();
+		} else {
+			return String.format("Checkup-Info Not Available in the patient-Id : %1$s & checkup-date : %2$s",
+					patient_id, patient_checkup_date);
+		}
+	}
 
-		return vitalSignsRepositary.save(vitalSign);
+	public String deleteCheckup(long patient_id, Date patient_checkup_date) {
+		if (vitalSignsRepositary.findByPatientidAndCheckupdate(patient_id, patient_checkup_date) != null) {
+
+			vitalSignsRepositary
+					.delete(vitalSignsRepositary.findByPatientidAndCheckupdate(patient_id, patient_checkup_date));
+			return String.format("Patient-ID %1$s Checkup-Date %2$s Deleted Succesfully", patient_id,
+					patient_checkup_date);
+		} else {
+			return String.format("Checkup-Info Not Available in the patient-Id : %1$s & checkup-date : %2$s",
+					patient_id, patient_checkup_date);
+		}
 	}
 
 }

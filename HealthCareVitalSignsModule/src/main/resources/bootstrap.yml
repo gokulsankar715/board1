@@ -7,6 +7,6 @@ spring:
       kv:
         enabled: true
       uri: http://localhost:8200
-      token: s.aF1j1WiHrLaEaAYTNE6C9UTt
+      token: 00000000-0000-0000-0000-000000000000
   application:
     name: Healthcare-Vital-Signs-API
