@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.ideas2it.health.user.Dto.Audit;
 
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(collection = "AuditPatient")
 public class PatientAuditDto {
 
 	private String userName;

@@ -12,4 +12,6 @@ public interface AuditRepositary extends MongoRepository<Audit, String> {
 	@Query(value = "{'execdate':{ $gte: ?0, $lte: ?1}}") // , $lte: ?1
 	List<Audit> findByExecDateBetween(Date date1, Date date2);
 
+	List<Audit> findByEventType(String eventType);
+
 }

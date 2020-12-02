@@ -12,6 +12,7 @@ import com.ideas2it.health.patient.Dto.PatientAuditDto;
 import com.ideas2it.health.user.Dto.Audit;
 import com.ideas2it.health.user.Dto.UserAuditDto;
 import com.ideas2it.health.user.Repositary.AuditRepositary;
+import com.ideas2it.health.user.Repositary.UserAuditRepositary;
 import com.ideas2it.health.user.Service.kafkaservice;
 import com.ideas2it.health.vital.signs.Dto.VitalSignAuditDto;
 
@@ -22,12 +23,15 @@ public class KafkaConsumerSample2Application {
 
 	private final AuditRepositary auditRepositary;
 
+	private final UserAuditRepositary userAuditRepositary;
+
 	@Autowired
-	public KafkaConsumerSample2Application(com.ideas2it.health.user.Service.kafkaservice kafkaservice,
-			AuditRepositary auditRepositary) {
+	public KafkaConsumerSample2Application(kafkaservice kafkaservice, AuditRepositary auditRepositary,
+			UserAuditRepositary userAuditRepositary) {
 		super();
 		this.kafkaservice = kafkaservice;
 		this.auditRepositary = auditRepositary;
+		this.userAuditRepositary = userAuditRepositary;
 	}
 
 	@KafkaListener(topics = "Healthcare_User", groupId = "group_healthuser", containerFactory = "healthkafkaListenerContainerFactory")

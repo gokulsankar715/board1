@@ -9,7 +9,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ideas2it.health.user.Dto.UserAuditDto;
+import com.ideas2it.health.user.Dto.Audit;
+import com.ideas2it.health.user.Repositary.AuditRepositary;
 import com.ideas2it.health.user.Repositary.UserAuditRepositary;
 
 @Service
@@ -17,6 +18,9 @@ public class kafkaservice {
 
 	@Autowired
 	private UserAuditRepositary userAuditRepositary;
+
+	@Autowired
+	private AuditRepositary auditRepositary;
 
 	public String findMethoadType(String methodOperation) {
 		String result = "";
@@ -46,21 +50,24 @@ public class kafkaservice {
 		return result;
 	}
 
-	public List<UserAuditDto> findDatefilter(String execDate1, String execDate2) throws ParseException {
-		List<UserAuditDto> userDetails = userAuditRepositary.findAll();
-		execDate1 = execDate1.replace("-", "/");
-		execDate2 = execDate2.replace("-", "/");
-		Date date1 = new SimpleDateFormat("yyyy/MM/dd").parse(execDate1);
-		Date date2 = new SimpleDateFormat("yyyy/MM/dd").parse(execDate2);
-		List<UserAuditDto> samsa = new ArrayList<>();
-		for (int i = 0; i < userDetails.size(); i++) {
-			String event_date = userDetails.get(i).getExecDate().replace("-", "/");
-			Date date = new SimpleDateFormat("yyyy/MM/dd").parse(event_date);
-			if ((date1.equals(date)) | (date1.before(date) && date2.after(date)) | (date2.equals(date))) {
-				samsa.add(userDetails.get(i));
+	public List<Audit> findDatefilter(String execDate1, String execDate2, String eventType) throws ParseException {
+		List<Audit> result_all = auditRepositary.findByEventType(eventType);
+		String dt1 = execDate1;
+		String dt2 = execDate2;
+		dt1 = dt1.replace("-", "/");
+		dt2 = dt2.replace("-", "/");
+		Date date1 = new SimpleDateFormat("yyyy/MM/dd").parse(dt1);
+		Date date2 = new SimpleDateFormat("yyyy/MM/dd").parse(dt2);
+		List<Audit> result = new ArrayList<>();
+		for (int i = 0; i < result_all.size(); i++) {
+			result_all.get(i).getExecDate().setHours(00);
+			result_all.get(i).getExecDate().setMinutes(00);
+			if ((date1.equals(result_all.get(i).getExecDate()))
+					| (date1.before(result_all.get(i).getExecDate()) && date2.after(result_all.get(i).getExecDate()))
+					| (date2.equals(result_all.get(i).getExecDate()))) {
+				result.add(result_all.get(i));
 			}
 		}
-		return samsa;
+		return result;
 	}
-
 }
